@@ -1,0 +1,729 @@
+
+.university-watermark {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.watermark-svg {
+  width: 64px;          /* 🔑 CONTROL SIZE HERE */
+  height: auto;
+  color: #2C3E50;
+  opacity: 0.08;        /* slightly higher for visibility */
+}
+
+.destination-card:hover {
+	color: #2c3e50;
+}
+.destination-icon-svg {
+  width: 22px;        
+  color: #2c3e50;  /* ⬅ MAIN CONTROL */
+  height: 22px;
+  stroke-width: 2;     /* ⬅ slightly thinner */
+}
+.destination-icon-wrapper {
+	width: 34px;
+	height: 34px;
+	border-radius: 14px;
+	background: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ar-branding {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  /* z-index: 50; */
+}
+
+.brand-logo {
+  height: 32px;
+  width: auto;
+  padding-bottom:2px;
+  object-fit: contain;
+  /* filter: drop-shadow(0 2px 6px rgba(0,0,0,.3)); */
+}
+
+.ica-logo {
+  height: 36px;
+}
+
+.navme-logo {
+  height: 28px;
+}
+
+
+* {
+  box-sizing: border-box;
+} 
+
+/* Main Container */
+.ar-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  overflow: hidden;
+}
+
+/* Simulated AR Camera View */
+.camera-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(44, 62, 80, 0.02) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(248, 249, 250, 0.8) 100%);
+}
+
+
+
+.watermark-svg {
+  width: 50px;
+  height: 50px;
+  fill: #2C3E50;
+}
+
+/* Floating Search Button - ID LOCKED - COMPACT */
+#floating-search-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  background: #2C3E50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(44, 62, 80, 0.2), 0 1px 5px rgba(44, 62, 80, 0.12);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1000;
+  border: none;
+}
+
+#floating-search-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 14px rgba(44, 62, 80, 0.25), 0 2px 7px rgba(44, 62, 80, 0.15);
+}
+
+#floating-search-icon:active {
+  transform: scale(0.95);
+}
+
+.search-icon-svg {
+  width: 20px;
+  height: 20px;
+  stroke: #FFFFFF;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* Expandable Search Container - ID LOCKED - COMPACT */
+#expandable-search-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 6px;
+  right: 0;
+  height: 90dvh;
+  max-height: 580px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 16px rgba(44, 62, 80, 0.12), 0 -1px 8px rgba(44, 62, 80, 0.06);
+  transform: scale(0.92) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2000;
+  border: 1px solid #2C3E50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#expandable-search-container.active {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+#expandable-search-container {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+
+/* Header Section - COMPACT */
+.search-header {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid rgba(44, 62, 80, 0.1);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.search-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2C3E50;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.close-button {
+  width: 28px;
+  height: 28px;
+  background: rgba(44, 62, 80, 0.06);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(44, 62, 80, 0.12);
+}
+
+.close-icon {
+  width: 14px;
+  height: 14px;
+  stroke: #2C3E50;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.gcu-logo-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.gcu-logo-svg {
+  width: 18px;
+  height: 18px;
+  fill: rgba(44, 62, 80, 0.3);
+}
+
+.gcu-text {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(44, 62, 80, 0.5);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Search Input - COMPACT */
+.search-input-wrapper {
+  padding: 0 16px 10px;
+  flex-shrink: 0;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px 10px 36px;
+  background: rgba(44, 62, 80, 0.04);
+  border: 1.5px solid rgba(44, 62, 80, 0.12);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #2C3E50;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.search-input:focus {
+  outline: none;
+  background: #FFFFFF;
+  border-color: #2C3E50;
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.08);
+}
+
+.search-input::placeholder {
+  color: rgba(44, 62, 80, 0.4);
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  stroke: rgba(44, 62, 80, 0.5);
+  fill: none;
+  stroke-width: 2.5;
+  pointer-events: none;
+}
+.category-chips {
+  padding: 0 16px 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 44px;        /* 🔑 REQUIRED for Android */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+
+.category-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  background: rgba(44, 62, 80, 0.08);
+  border: 1.5px solid rgba(44, 62, 80, 0.15);
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #2C3E50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 6px;
+}
+
+.category-chip:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(44, 62, 80, 0.25);
+}
+
+.category-chip.active {
+  background: #2C3E50;
+  color: #FFFFFF;
+  border-color: #2C3E50;
+}
+
+.chip-icon {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Destination List - COMPACT */
+.destination-list,
+.destinations-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 300px;
+  overflow-y: scroll !important;
+  overflow-x: hidden;
+  padding: 12px 16px 20px 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(44, 62, 80, 0.3) transparent;
+}
+
+.destination-list::-webkit-scrollbar,
+.destinations-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.destination-list::-webkit-scrollbar-track,
+.destinations-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.destination-list::-webkit-scrollbar-thumb,
+.destinations-container::-webkit-scrollbar-thumb {
+  background: rgba(44, 62, 80, 0.2);
+  border-radius: 2px;
+}
+
+.destination-list::-webkit-scrollbar-thumb:hover,
+.destinations-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(44, 62, 80, 0.4);
+}
+
+.destination-card {
+  background: rgba(44, 62, 80, 0.04);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid rgba(44, 62, 80, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.destination-card:first-child {
+  margin-top: 0;
+}
+
+.destination-card:last-child {
+  margin-bottom: 0;
+}
+
+.destination-card:hover {
+  border-color: #2C3E50;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.1);
+  transform: translateY(-1px);
+}
+
+.destination-card:active {
+  transform: translateY(0);
+}
+
+.destination-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  background: rgba(44, 62, 80, 0.06);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.destination-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #2C3E50;
+  fill: none;
+  stroke-width: 2;
+}
+
+.destination-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.destination-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 3px 0;
+  letter-spacing: -0.2px;
+}
+
+.destination-name-disp {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 3px 0;
+  letter-spacing: -0.2px;
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+.destination-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.destination-category {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(44, 62, 80, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.destination-description {
+  font-size: 11px;
+  color: rgba(44, 62, 80, 0.65);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Footer Branding - COMPACT */
+.search-footer {
+  padding: 10px 16px;
+  border-top: 1px solid rgba(44, 62, 80, 0.08);
+  text-align: center;
+  flex-shrink: 0;
+  background: rgba(44, 62, 80, 0.02);
+}
+
+.footer-university {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(44, 62, 80, 0.7);
+  margin: 0 0 4px 0;
+  letter-spacing: 0.2px;
+}
+
+.footer-partners {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(44, 62, 80, 0.5);
+  margin: 0;
+}
+
+/* Navigation Popup - ID LOCKED - COMPACT */
+#navigation-popup {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2C3E50;
+  color: #FFFFFF;
+  padding: 10px 18px;
+  border-radius: 18px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.25);
+  z-index: 900;
+  transition: all 0.3s ease;
+}
+
+#navigation-popup.active {
+  display: flex;
+}
+
+#navigation-popup.almost-there {
+  background: #f39c12;
+}
+
+#navigation-popup.arrived {
+  background: #27ae60;
+}
+
+.nav-popup-icon {
+  width: 16px;
+  height: 16px;
+  stroke: #FFFFFF;
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.nav-popup-text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+/* Recenter Button - ID LOCKED - COMPACT */
+#recenter-button {
+  position: fixed;
+  bottom: 70px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(44, 62, 80, 0.15);
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 6px rgba(44, 62, 80, 0.12);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 900;
+}
+
+#recenter-button.active {
+  display: flex;
+}
+
+#recenter-button:hover {
+  background: rgba(44, 62, 80, 0.04);
+  border-color: #2C3E50;
+  transform: scale(1.05);
+}
+
+#recenter-button:active {
+  transform: scale(0.95);
+}
+
+.recenter-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #2C3E50;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Position Menu - ID LOCKED - COMPACT */
+#position-menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 24px rgba(44, 62, 80, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 3000;
+  min-width: 220px;
+}
+
+#position-menu.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.position-menu-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2C3E50;
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.position-menu-button {
+  width: 100%;
+  padding: 10px;
+  background: rgba(44, 62, 80, 0.06);
+  border: 1.5px solid rgba(44, 62, 80, 0.12);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2C3E50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+
+.position-menu-button:hover {
+  background: #2C3E50;
+  color: #FFFFFF;
+  border-color: #2C3E50;
+}
+
+/* Distance Calculator UI - ID LOCKED - COMPACT */
+#distance-calculator-ui {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFFFFF;
+  border: 1.5px solid rgba(44, 62, 80, 0.15);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 8px rgba(44, 62, 80, 0.08);
+  display: none;
+  z-index: 850;
+  min-width: 160px;
+  text-align: center;
+}
+
+#distance-calculator-ui.active {
+  display: block;
+}
+
+.distance-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(44, 62, 80, 0.7);
+  margin: 0 0 3px 0;
+}
+
+.distance-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2C3E50;
+  margin: 0;
+}
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1500;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Responsive - COMPACT */
+@media (max-width: 360px) {
+  #floating-search-icon {
+    width: 40px;
+    height: 40px;
+    bottom: 14px;
+    right: 14px;
+  }
+
+  .search-icon-svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .search-input {
+    font-size: 12px;
+    padding: 9px 10px 9px 34px;
+  }
+
+  .destination-card {
+    padding: 8px;
+  }
+
+  .category-chip {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  #expandable-search-container {
+    height: 85dvh;
+    max-height: 580px;
+  }
+}
+
+@media (min-width: 768px) {
+  #expandable-search-container {
+    max-width: 380px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    border-radius: 16px;
+    height: 90dvh;
+    max-height: 580px;
+  }
+
+  #expandable-search-container.active {
+    transform: translateX(-50%) translateY(0);
+  }
+}

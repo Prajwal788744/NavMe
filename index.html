@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=auto" />
+    <meta charset="UTF-8" />
+    <script src="./index.ts" type="module" async></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+      /* --- Final Optimized Body/HTML --- */
+      <body>
+      html {
+        padding: 0 !important; /* Added !important */
+        margin: 0 !important; /* Added !important */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        height: 100dvh;   
+        height: 100svh;   
+        overflow: hidden;
+        background: #2c3e50 !important;
+        background-color: #2c3e50 !important;
+        touch-action: pan-x pan-y;
+      }
+
+
+      /* --- Final Optimized Splash Container --- */
+      .splash {
+        background: linear-gradient(135deg, #1a252f 0%, #2c3e50 50%, #34495e 100%);
+        position: fixed;
+        /* KEY: Fill the entire viewport from edge-to-edge */
+        inset: 0;   
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      /* Animated background particles (No change) */
+      .splash::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: 
+          radial-gradient(circle at 20% 50%, rgba(52, 152, 219, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(41, 128, 185, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 40% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%);
+        animation: particleFloat 15s ease-in-out infinite;
+      }
+      /* ... rest of the CSS remains the same ... */
+
+/* Animated background particles */
+@keyframes particleFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+
+
+
+.splash-box {
+  width: 420px;
+  max-width: 90%;
+  background: rgba(44, 62, 80, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 24px;
+  padding: 60px 40px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Glassmorphic shine effect */
+.splash-box::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 70%
+  );
+  animation: shine 8s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  50% { transform: translate(50%, 50%) rotate(180deg); }
+}
+
+/* Loading Progress Container */
+.loading-progress {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.loading-progress.hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.progress-info {
+  margin-bottom: 25px;
+}
+
+.progress-percentage {
+  font-size: 48px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  text-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  filter: drop-shadow(0 0 20px rgba(52, 152, 219, 0.4));
+}
+
+.progress-percentage::after {
+  content: '%';
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 12px;
+  background: rgba(44, 62, 80, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* Animated background in progress bar */
+.progress-bar-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% { left: 100%; }
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3498db 0%, #2980b9 50%, #3498db 100%);
+  background-size: 200% 100%;
+  border-radius: 20px;
+  position: relative;
+  animation: 
+    progressFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    gradientShift 2s ease infinite;
+  box-shadow: 
+    0 0 20px rgba(52, 152, 219, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Glowing dot at the end of progress bar */
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 10px #fff,
+    0 0 20px #3498db,
+    0 0 30px #3498db;
+  animation: pulse 1s ease infinite;
+}
+
+@keyframes progressFill {
+  to { width: 100%; }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+  50% { opacity: 0.7; transform: translateY(-50%) scale(1.3); }
+}
+
+.loading-status {
+  margin-top: 20px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.loading-dots {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: dotBounce 1.4s infinite ease-in-out;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Ready State */
+.ready-icon {
+  width: 100px;
+  height: 100px;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 0 30px rgba(52, 152, 219, 0.6));
+}
+
+.ready-icon.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ready-icon circle {
+  stroke-dasharray: 63;
+  stroke-dashoffset: 63;
+  animation: drawCircle 0.6s ease forwards 0.2s;
+}
+
+.ready-icon path {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  animation: drawCheck 0.4s ease forwards 0.6s;
+}
+
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+.ready-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin: 20px 0 0 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease 0.8s;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.ready-text.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#launchButton {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 30px;
+  line-height: 24px;
+  height: auto;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 24px rgba(52, 152, 219, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+#launchButton.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.6s ease 1s;
+}
+
+#launchButton:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 32px rgba(52, 152, 219, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+#launchButton:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Button shine effect */
+#launchButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+#launchButton:not(:disabled):hover::before {
+  left: 100%;
+}
+
+#launchButton:disabled {
+  background: rgba(44, 62, 80, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 56px;
+  height: 56px;
+  visibility: hidden;
+  padding: 0px;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#launchButton:disabled:before {
+  content: ' ';
+  visibility: visible;
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 0px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 4px solid transparent;
+  border-top-color: #3498db;
+  border-right-color: #3498db;
+  animation: loading-animation 1s linear infinite;
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
+}
+
+@keyframes loading-animation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.zcomponent-launched .splash {
+  display: none;
+}
+#watermark {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+#watermark img {
+  width: 60px;
+  opacity: 0.5;
+}
+
+    </style>
+	</body>
+  </head>
+
+
+
+  <body>
+    <div id="watermark">
+  <img src="navmelogo.png" alt="NavMe Logo" />
+</div>
+    <div class="splash">
+      <div class="splash-box">
+        <div class="loading-progress">
+          <div class="progress-info">
+            <span class="progress-percentage">0</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+          </div>
+          <div class="loading-status">
+            Initializing AR Engine
+            <span class="loading-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </span>
+          </div>
+        </div>
+
+        <svg class="ready-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="#3498db" stroke-width="2" />
+          <path d="M7 12 L10 15 L17 8" fill="none" stroke="#3498db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <h2 class="ready-text">Ready to Navigate!</h2>
+        <button id="launchButton" disabled>Launch NavMe</button>
+      </div>
+    </div>
+
+    <script>
+      // Fake loading progression
+      const progressBar = document.querySelector('.progress-bar');
+      const progressPercentage = document.querySelector('.progress-percentage');
+      const loadingProgress = document.querySelector('.loading-progress');
+      const readyIcon = document.querySelector('.ready-icon');
+      const readyText = document.querySelector('.ready-text');
+      const launchButton = document.getElementById('launchButton');
+      const loadingStatus = document.querySelector('.loading-status');
+
+      const statuses = [
+        'Initializing AR Engine',
+        'Loading 3D Models',
+        'Calibrating Sensors',
+        'Preparing Navigation',
+        'Almost Ready'
+      ];
+
+      let progress = 0;
+      let statusIndex = 0;
+      const duration = 4000; // 4 seconds
+      const interval = 50; // Update every 50ms
+      const increment = 100 / (duration / interval);
+
+      const progressInterval = setInterval(() => {
+        progress += increment;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(progressInterval);
+          
+          // Show ready state after a brief delay
+          setTimeout(() => {
+            loadingProgress.classList.add('hidden');
+            setTimeout(() => {
+              readyIcon.classList.add('show');
+              readyText.classList.add('show');
+              launchButton.classList.add('show');
+              launchButton.disabled = false;
+            }, 300);
+          }, 500);
+        }
+        
+        progressPercentage.textContent = Math.floor(progress);
+
+        // Update status text
+        const newStatusIndex = Math.floor((progress / 100) * statuses.length);
+        if (newStatusIndex !== statusIndex && newStatusIndex < statuses.length) {
+          statusIndex = newStatusIndex;
+          loadingStatus.childNodes[0].textContent = statuses[statusIndex] + ' ';
+        }
+      }, interval);
+
+      // // Button functionality (preserved)
+      // launchButton.addEventListener('click', () => {
+      //  document.body.classList.add('zcomponent-launched');
+      // });
+    </script>
+  </body>
+</html>
