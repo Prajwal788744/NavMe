@@ -48,11 +48,7 @@ export default class PeopleSearchUI extends Component {
   private readonly REQUEST_RESPOND_URL =
     "https://g3cb3b1c0924a5d-rho2ag4cklj4nhpl.adb.ap-hyderabad-1.oraclecloudapps.com/ords/ng/ar/AR_CONNECTION_REQUESTS";
 
-  private readonly LATEST_POSITION_URL =
-    "https://g3cb3b1c0924a5d-rho2ag4cklj4nhpl.adb.ap-hyderabad-1.oraclecloudapps.com/ords/ng/ar/locationnode";
-
-  // Polling intervals removed
-
+  // Polling removed in favor of WebSockets
   private pendingRequests: any[] = [];
   private handledAcceptedOutgoing: Set<number> = new Set();
   private handledRejectedOutgoing: Set<number> = new Set();
@@ -60,54 +56,67 @@ export default class PeopleSearchUI extends Component {
   private previousPeople: Map<string, Person> = new Map();
   private connectedEmails: Set<string> = new Set();
 
+  private readonly handlePositionUpdate = (data: PositionUpdate) => {
+    this._handleLiveUpdate(data);
+  };
+
   constructor(contextManager: ContextManager) {
     super(contextManager);
     this._createUI();
-    this._setupWebSocketListeners();
+
+    // Start WebSocket listening instead of polling
+    this._startListening();
 
     window.selectedX = 0;
     window.selectedY = 0;
     window.selectedZ = 0;
   }
 
-  private _setupWebSocketListeners(): void {
-    WebSocketClient.getInstance().on('position_update', (data: PositionUpdate) => {
-      // Update selected user if matched
-      if (window.selectedUser && window.selectedUser.email === data.email) {
-        window.selectedX = data.position.x;
-        window.selectedY = data.position.y;
-        window.selectedZ = data.position.z;
+  private _startListening(): void {
+    WebSocketClient.getInstance().on('position_update', this.handlePositionUpdate);
+    console.log("PeopleSearchUI: Listening for WS updates");
+  }
 
-        window.selectedUser.position = data.position;
-        window.selectedUser.floor = data.floor;
-        window.selectedUser.lastSeen = new Date(data.timestamp).toLocaleString();
+  private _stopListening(): void {
+    WebSocketClient.getInstance().off('position_update', this.handlePositionUpdate);
+  }
 
-        this._notifySelectedUserChanged();
-        console.log(`✅ Live update for ${data.email}:`, data.position);
-      }
+  private _handleLiveUpdate(data: PositionUpdate): void {
+    // 1. Update Selected User (if it matches)
+    if (window.selectedUser && window.selectedUser.email === data.email) {
+      window.selectedUser.position = data.position;
+      window.selectedUser.floor = data.floor;
+      window.selectedUser.lastSeen = new Date(data.timestamp).toLocaleString();
 
-      // Also update the list item if it exists (for last seen / floor)
-      // We can optionally update the 'Person' object in 'previousPeople' map too.
-      if (this.previousPeople.has(data.email)) {
-        const person = this.previousPeople.get(data.email)!;
-        person.position = [data.position.x, data.position.y, data.position.z];
-        person.floor = data.floor;
-        person.lastSeen = new Date(data.timestamp).toLocaleString();
+      window.selectedX = data.position.x;
+      window.selectedY = data.position.y;
+      window.selectedZ = data.position.z;
 
-        // If the panel is open, update the card UI
-        if (this._peopleList) {
-          const card = this._peopleList.querySelector(`.person-card[data-email="${data.email}"]`) as HTMLElement;
-          if (card) {
-            // We need to know if pending/connected to keep styling. 
-            // For now, just update the meta text.
-            const metaEl = card.querySelector(".person-meta");
-            if (metaEl) {
-              metaEl.innerHTML = `Floor ${person.floor || "?"} • Last: ${person.lastSeen}`;
-            }
-          }
+      // Notify other components (like MyBehavior) instantly
+      this._notifySelectedUserChanged();
+      // console.log(`✅ Live update for ${data.email}:`, data.position);
+    }
+
+    // 2. Update the list UI if open
+    if (this._peopleList) {
+      const card = this._peopleList.querySelector(`.person-card[data-email="${data.email}"]`) as HTMLElement;
+      if (card) {
+        // Update meta info
+        const metaEl = card.querySelector(".person-meta");
+        if (metaEl) {
+          const timeStr = new Date(data.timestamp).toLocaleString();
+          metaEl.innerHTML = `Floor ${data.floor || "?"} • Last: ${timeStr}`;
         }
       }
-    });
+    }
+
+    // 3. Update internal map
+    if (this.previousPeople.has(data.email)) {
+      const person = this.previousPeople.get(data.email)!;
+      person.position = [data.position.x, data.position.y, data.position.z];
+      person.floor = data.floor;
+      person.lastSeen = new Date(data.timestamp).toLocaleString();
+    }
   }
 
   private _clearSelectedGlobals(): void {
@@ -506,13 +515,13 @@ svg {
     const toggle = document.getElementById("share-toggle") as HTMLInputElement;
     if (!toggle?.checked) {
       this._peopleList.innerHTML = `
-      <div class="empty-state">
-        <svg class="empty-icon" viewBox="0 0 24 24">
-          <path d="M12 15v2m0 0v2m0-2h-2m2 0h2M3 21h18M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
-        </svg>
-        Please turn on share to connect
-      </div>
-    `;
+        <div class="empty-state">
+          <svg class="empty-icon" viewBox="0 0 24 24">
+            <path d="M12 15v2m0 0v2m0-2h-2m2 0h2M3 21h18M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+          </svg>
+          Please turn on share to connect
+        </div>
+      `;
       this.previousPeople.clear();
       return;
     }
@@ -524,13 +533,13 @@ svg {
 
       if (!nodesData.items || nodesData.items.length === 0) {
         this._peopleList.innerHTML = `
-        <div class="empty-state">
-          <svg class="empty-icon" viewBox="0 0 24 24">
-            <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-4a2 2 0 00-2 2v2a2 2 0 002 2h4a2 2 0 002-2v-2a2 2 0 00-2-2z"/>
-          </svg>
-          No data available
-        </div>
-      `;
+          <div class="empty-state">
+            <svg class="empty-icon" viewBox="0 0 24 24">
+              <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-4a2 2 0 00-2 2v2a2 2 0 002 2h4a2 2 0 002-2v-2a2 2 0 00-2-2z"/>
+            </svg>
+            No data available
+          </div>
+        `;
         this.previousPeople.clear();
         return;
       }
@@ -589,14 +598,14 @@ svg {
 
       if (newPeopleMap.size === 0) {
         this._peopleList.innerHTML = `
-        <div class="empty-state">
-          <svg class="empty-icon" viewBox="0 0 24 24">
-            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-          No one is sharing location
-        </div>
-      `;
+          <div class="empty-state">
+            <svg class="empty-icon" viewBox="0 0 24 24">
+              <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            No one is sharing location
+          </div>
+        `;
       } else {
         const sortedPeople = [...newPeopleMap.values()].sort((a, b) =>
           a.name.localeCompare(b.name)
@@ -616,14 +625,14 @@ svg {
     } catch (err) {
       console.error("Failed to load people:", err);
       this._peopleList.innerHTML = `
-      <div class="empty-state" style="color:#ff6b6b;">
-        <svg class="empty-icon" viewBox="0 0 24 24" style="stroke:#2c3e50;">
-          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-        </svg>
-        Failed to load people<br/>
-        <small>Check connection or try again later</small>
-      </div>
-    `;
+        <div class="empty-state" style="color:#ff6b6b;">
+          <svg class="empty-icon" viewBox="0 0 24 24" style="stroke:#2c3e50;">
+            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          Failed to load people<br/>
+          <small>Check connection or try again later</small>
+        </div>
+      `;
       this.previousPeople.clear();
     }
   }
@@ -840,10 +849,6 @@ svg {
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
   }
-
-  // ────────────────────────────────────────────────
-  // The rest remains 100% unchanged — only UI was touched
-  // ────────────────────────────────────────────────
 
   private async _checkRequests(): Promise<void> {
     if (!(window as any).APP_USER?.email) return;
@@ -1220,9 +1225,7 @@ svg {
   }
 
   dispose() {
-    if (this.pollRequestsIntervalId) clearInterval(this.pollRequestsIntervalId);
-    if (this.pollPeopleIntervalId) clearInterval(this.pollPeopleIntervalId);
-    if (this.pollSelectedPositionId) clearInterval(this.pollSelectedPositionId);
+    this._stopListening();
     return super.dispose();
   }
 }

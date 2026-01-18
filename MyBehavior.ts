@@ -4,6 +4,7 @@ import {
   registerBehaviorRunAtDesignTime
 } from "@zcomponent/core";
 import { Box } from "@zcomponent/three/lib/components/meshes/Box";
+import { WebSocketClient, PositionUpdate } from "./WebSocketClient";
 
 /**
  * @zbehavior
@@ -23,12 +24,18 @@ export class MyBehavior extends Behavior<Box> {
   // ✅ Safe fallback (static POI)
   private fallback: [number, number, number] = [1.5, -0.97, -0.16];
 
-  /* ────────────────────────────────────────────── */
-  /* Polling                                       */
-  /* ────────────────────────────────────────────── */
+  private readonly handleUpdate = (data: PositionUpdate) => {
+    // Only update if this is the currently selected user
+    if (window.selectedUser && window.selectedUser.email === data.email) {
+      // Direct update from WS for smoothness
+      this.setPosition(data.position.x, data.position.y + this.Y_OFFSET, data.position.z);
+    }
+  };
 
-  private readonly POLL_MS = 1000; // ✅ 30 seconds
-  private pollTimer: number | null = null;
+  private readonly handleUserChange = () => {
+    // When selected user changes (or is cleared), apply immediately from globals
+    this._applyFromWindow();
+  };
 
   constructor(
     contextManager: ContextManager,
@@ -39,8 +46,8 @@ export class MyBehavior extends Behavior<Box> {
     // Initial apply
     this._applyFromWindow();
 
-    // Start polling
-    this._startPolling();
+    // Start listening
+    this._startListening();
   }
 
   /* ────────────────────────────────────────────── */
@@ -62,23 +69,22 @@ export class MyBehavior extends Behavior<Box> {
   }
 
   /* ────────────────────────────────────────────── */
-  /* Polling control                                */
+  /* Event Listeners                                */
   /* ────────────────────────────────────────────── */
 
-  private _startPolling(): void {
-    if (this.pollTimer) return;
+  private _startListening(): void {
+    // Listen for live updates via WebSocket
+    WebSocketClient.getInstance().on('position_update', this.handleUpdate);
 
-    this.pollTimer = window.setInterval(() => {
-      this._applyFromWindow();
-    }, this.POLL_MS);
+    // Listen for user selection changes (from UI)
+    window.addEventListener("selected-user-changed", this.handleUserChange);
 
-    console.log("📡 Destination polling started (30s)");
+    console.log("📡 WebSocket & Event listening started");
   }
 
-  private _stopPolling(): void {
-    if (!this.pollTimer) return;
-    clearInterval(this.pollTimer);
-    this.pollTimer = null;
+  private _stopListening(): void {
+    WebSocketClient.getInstance().off('position_update', this.handleUpdate);
+    window.removeEventListener("selected-user-changed", this.handleUserChange);
   }
 
   /* ────────────────────────────────────────────── */
@@ -99,7 +105,7 @@ export class MyBehavior extends Behavior<Box> {
   /* ────────────────────────────────────────────── */
 
   dispose() {
-    this._stopPolling();
+    this._stopListening();
     return super.dispose();
   }
 }
